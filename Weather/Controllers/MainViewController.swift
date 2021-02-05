@@ -119,6 +119,8 @@ extension MainViewController: NetworkWeatherManagerDelegate {
         }
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         present(alert, animated: true)
+        
+        deactivateLoadingIndicator()
     }
 }
 

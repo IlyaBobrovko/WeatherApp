@@ -37,8 +37,8 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Qe5-lL-Rwg">
                                 <rect key="frame" x="107" y="100" width="200" height="332.5"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Minsk" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GDV-Ms-bUy">
-                                        <rect key="frame" x="66" y="0.0" width="68" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Chicago" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GDV-Ms-bUy">
+                                        <rect key="frame" x="53" y="0.0" width="94.5" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="keT-Jg-BBc"/>
                                         </constraints>

@@ -34,18 +34,12 @@ class NetworkWeatherManager {
         DispatchQueue.global(qos: .userInteractive).async {
         
             guard self.networkManager.isInternetConntected() else {
-                DispatchQueue.main.async {
-                    self.delegate?.presentErrorAlert(errorType: .networkError)
-                    self.delegate?.deactivateLoadingIndicator()
-                }
+                DispatchQueue.main.async { self.delegate?.presentErrorAlert(errorType: .networkError) }
                 return
             }
 
             guard let url = URL(string: urlString), let data = try? Data(contentsOf: url) else {
-                DispatchQueue.main.async {
-                    self.delegate?.presentErrorAlert(errorType: .ivalidLocationError)
-                    self.delegate?.deactivateLoadingIndicator()
-                }
+                DispatchQueue.main.async { self.delegate?.presentErrorAlert(errorType: .ivalidLocationError) }
                 return
             }
             
