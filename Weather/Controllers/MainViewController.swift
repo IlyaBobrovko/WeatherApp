@@ -10,8 +10,8 @@ import CoreLocation
 
 protocol NetworkWeatherManagerDelegate {
     func updateWeatherData(currentWeather: CurrentWeather)
-    func activateIndicator()
-    func deactivateIndicator()
+    func activateLoadingIndicator()
+    func deactivateLoadingIndicator()
     func presentErrorAlert(errorType: ErrorType)
 }
 
@@ -23,25 +23,21 @@ class MainViewController: UIViewController {
     @IBOutlet weak var additionalInfoLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    let networkWeatherManager = NetworkWeatherManager()
-    let locationManager = CLLocationManager()
+    private let networkWeatherManager = NetworkWeatherManager()
+    private let locationManager = CLLocationManager()
         
     @IBAction func searchCity(_ sender: Any) {
         presentAlertController()
     }
     
     @IBAction func fetchWeatherForCurrentLocation(_ sender: Any) {
-        activateIndicator()
+        activateLoadingIndicator()
         if CLLocationManager.locationServicesEnabled() {
-            print("location services enable")
             locationManager.requestLocation()
         } else {
-            print("location services unenable\n")
             presentErrorAlert(errorType: .unavailableLocationServices)
-            deactivateIndicator()
+            deactivateLoadingIndicator()
         }
-        //locationManager.requestLocation()
-        print("current location button")
 
     }
     
@@ -54,12 +50,11 @@ class MainViewController: UIViewController {
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         locationManager.requestWhenInUseAuthorization()
         
-        activateIndicator()
+                activateLoadingIndicator()
         
         if CLLocationManager.locationServicesEnabled() {
             locationManager.requestLocation()
         } else {
-            print("location services unenable")
             networkWeatherManager.fetchCurrentWeather(requestType: .city(name: "Siattle"))
         }
     }
@@ -70,17 +65,20 @@ class MainViewController: UIViewController {
 
 extension MainViewController {
     func presentAlertController() {
-        let alert = UIAlertController(title: "Enter city name", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Enter location name", message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
-            textField.placeholder = "Tokyo"
+            let sities = ["Tokyo", "Moscow", "Barcelona", "New York", "Paris", "Los Angeles", "London"]
+            textField.placeholder = sities.randomElement()
         }
+        
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Search", style: .default, handler: { _ in
-            guard var cityName = alert.textFields?.first?.text else { return }
-            cityName = cityName.split(separator: " ").joined(separator: "%20")
-            print("searth for \(cityName)")
-            self.networkWeatherManager.fetchCurrentWeather(requestType: .city(name: cityName))
+            guard var locationName = alert.textFields?.first?.text else { return }
+            locationName = locationName.split(separator: " ").joined(separator: "%20")
+            print("searth weather for \(locationName)") //delete this
+            self.networkWeatherManager.fetchCurrentWeather(requestType: .city(name: locationName))
         }))
+        
         present(alert, animated: true)
     }
     
@@ -96,15 +94,15 @@ extension MainViewController: NetworkWeatherManagerDelegate {
         additionalInfoLabel.text = "Min \(currentWeather.minTemperatureString)°, max \(currentWeather.maxTemperatureString)°"
         currentWeatherImage.image = UIImage(systemName: currentWeather.weatherImageName)
         
-        deactivateIndicator()
+        deactivateLoadingIndicator()
     }
     
-    func activateIndicator() {
+    func activateLoadingIndicator() {
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
 
-    func deactivateIndicator() {
+    func deactivateLoadingIndicator() {
         activityIndicator.isHidden = true
         activityIndicator.stopAnimating()
     }
@@ -117,7 +115,7 @@ extension MainViewController: NetworkWeatherManagerDelegate {
         case .networkError:
             alert = UIAlertController(title: "Network error", message: "No internet connection. Please try again.", preferredStyle: .alert)
         case .unavailableLocationServices:
-            alert = UIAlertController(title: "UnavailableLocationServices", message: "REMAKE THIS STRING.", preferredStyle: .alert)
+            alert = UIAlertController(title: "Unavailable Location Services", message: "REMAKE THIS STRING.", preferredStyle: .alert)
         }
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         present(alert, animated: true)
@@ -140,6 +138,6 @@ extension MainViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         presentErrorAlert(errorType: .unavailableLocationServices)
-        deactivateIndicator()
+        deactivateLoadingIndicator()
     }
 }

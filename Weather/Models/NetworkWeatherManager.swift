@@ -29,14 +29,14 @@ class NetworkWeatherManager {
             urlString = "\(urlPath)?units=metric&lat=\(latitude)&lon=\(longitude)&appid=\(apiKey)"
         }
        
-        print(urlString)     // для отладки
-        delegate?.activateIndicator()
+        print(urlString)     // delete this
+        delegate?.activateLoadingIndicator()
         DispatchQueue.global(qos: .userInteractive).async {
         
             guard self.networkManager.isInternetConntected() else {
                 DispatchQueue.main.async {
                     self.delegate?.presentErrorAlert(errorType: .networkError)
-                    self.delegate?.deactivateIndicator()
+                    self.delegate?.deactivateLoadingIndicator()
                 }
                 return
             }
@@ -44,14 +44,14 @@ class NetworkWeatherManager {
             guard let url = URL(string: urlString), let data = try? Data(contentsOf: url) else {
                 DispatchQueue.main.async {
                     self.delegate?.presentErrorAlert(errorType: .ivalidLocationError)
-                    self.delegate?.deactivateIndicator()
+                    self.delegate?.deactivateLoadingIndicator()
                 }
                 return
             }
             
             guard let jsonData = try? JSONDecoder().decode(CurrentWeatherData.self, from: data) else { return }
             
-            print("\(jsonData.name) \(jsonData.weather.first?.icon ?? "unknown") icon\n") // для отладки
+            print("\(jsonData.name) \(jsonData.weather.first?.icon ?? "unknown") icon\n") // delete
             DispatchQueue.main.async {
                 self.delegate?.updateWeatherData(currentWeather: CurrentWeather(currentWetherData: jsonData))
 

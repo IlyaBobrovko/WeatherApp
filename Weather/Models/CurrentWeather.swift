@@ -8,12 +8,14 @@
 import Foundation
 
 struct CurrentWeather {
+    
     let cityName: String
     
     let currentTemperature: Double
     var currentTempetatureString: String {
         return String(Int(currentTemperature.rounded()))
     }
+    
     let minTemperature: Double
     var minTemperatureString: String {
         return String(format: "%.0f", minTemperature)
@@ -45,6 +47,7 @@ struct CurrentWeather {
         "50d" : "cloud.fog.fill",
         "50n" : "cloud.fog.fill"
     ]
+    
     var weatherImageName: String {
         return weatherIcons[weatherIcon] ?? "exclamationmark.icloud.fill"
     }
