@@ -18,6 +18,7 @@ protocol NetworkWeatherManagerDelegate {
 class NetworkWeatherManager {
     
     private var networkManager = NetworkManager()
+    
     var delegate: NetworkWeatherManagerDelegate?
     
     enum WeatherRequestType {
@@ -38,7 +39,7 @@ class NetworkWeatherManager {
         
         let urlString = getURL(for: requestType)
         
-        print(urlString)     // delete this
+        print("URL: \(urlString)")
         delegate?.activateLoadingIndicator()
         DispatchQueue.global(qos: .userInteractive).async {
         
@@ -54,7 +55,7 @@ class NetworkWeatherManager {
             
             guard let jsonData = try? JSONDecoder().decode(CurrentWeatherData.self, from: data) else { return }
        
-            print("\(jsonData.locationName) \(jsonData.weatherIcon.first?.id ?? "unknown") icon\n") // delete
+            print(jsonData.locationName)
 
             DispatchQueue.main.async {
                 self.delegate?.updateWeatherData(for: CurrentWeather(data: jsonData))

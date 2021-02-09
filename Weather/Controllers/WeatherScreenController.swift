@@ -8,9 +8,8 @@
 import UIKit
 import CoreLocation
 
-//todo move
 
-class WeatherViewController: UIViewController {
+class WeatherScreenController: UIViewController {
 
     @IBOutlet weak var cityNameLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -56,7 +55,7 @@ class WeatherViewController: UIViewController {
 
 //MARK: - AlertControllers
 
-extension WeatherViewController {
+extension WeatherScreenController {
     private func presentAlertController() {
         let alert = UIAlertController(title: "Enter location name", message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
@@ -79,7 +78,7 @@ extension WeatherViewController {
 
 //MARK: - NetworkWeatherManagerDelegare
 
-extension WeatherViewController: NetworkWeatherManagerDelegate {
+extension WeatherScreenController: NetworkWeatherManagerDelegate {
     
     func updateWeatherData(for weather: CurrentWeather) {
         cityNameLabel.text = weather.locationName
@@ -121,7 +120,7 @@ extension WeatherViewController: NetworkWeatherManagerDelegate {
 
 //MARK: - LocationManagerDelegate
 
-extension WeatherViewController: CLLocationManagerDelegate {
+extension WeatherScreenController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
