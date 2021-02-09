@@ -9,25 +9,25 @@ import Foundation
 
 struct CurrentWeather {
     
-    let cityName: String
+    let locationName: String
     
-    let currentTemperature: Double
+    private let currentTemperature: Double
     var currentTempetatureString: String {
         return String(Int(currentTemperature.rounded()))
     }
     
-    let minTemperature: Double
+    private let minTemperature: Double
     var minTemperatureString: String {
         return String(format: "%.0f", minTemperature)
     }
     
-    let maxTemperature: Double
+    private let maxTemperature: Double
     var maxTemperatureString: String {
         return String(format: "%.0f", maxTemperature)
     }
     
     let weatherIcon: String
-    let weatherIcons: [String: String] = [
+    static let weatherIcons: [String: String] = [
         "01d" : "sun.max.fill",
         "01n" : "moon.fill",
         "02d" : "cloud.sun.fill",
@@ -49,14 +49,14 @@ struct CurrentWeather {
     ]
     
     var weatherImageName: String {
-        return weatherIcons[weatherIcon] ?? "exclamationmark.icloud.fill"
+        return CurrentWeather.weatherIcons[weatherIcon] ?? "exclamationmark.icloud.fill"
     }
     
-    init(currentWetherData: CurrentWeatherData) {
-        cityName = currentWetherData.name
-        currentTemperature = currentWetherData.main.temp
-        minTemperature = currentWetherData.main.tempMin
-        maxTemperature = currentWetherData.main.tempMax
-        weatherIcon = currentWetherData.weather.first?.icon ?? "exclamationmark.icloud.fill"
+    init(data: CurrentWeatherData) {
+        locationName = data.locationName
+        currentTemperature = data.temperature.current
+        minTemperature = data.temperature.min
+        maxTemperature = data.temperature.max
+        weatherIcon = data.weatherIcon.first?.id ?? "exclamationmark.icloud.fill"
     }
 }

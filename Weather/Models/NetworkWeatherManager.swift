@@ -8,27 +8,36 @@
 import Foundation
 import CoreLocation
 
+protocol NetworkWeatherManagerDelegate {
+    func updateWeatherData(for weather: CurrentWeather)
+    func activateLoadingIndicator()
+    func deactivateLoadingIndicator()
+    func presentErrorAlert(errorType: ErrorType)
+}
+
 class NetworkWeatherManager {
     
-    var networkManager = NetworkManager()
+    private var networkManager = NetworkManager()
     var delegate: NetworkWeatherManagerDelegate?
     
     enum WeatherRequestType {
         case city(name: String)
         case coordinate(latitude: CLLocationDegrees, longitude: CLLocationDegrees)
     }
+    
+    private func getURL(for type: WeatherRequestType) -> String {
+        switch type {
+        case .city(let name):
+            return "\(urlPath)?units=metric&q=\(name)&appid=\(apiKey)"
+        case .coordinate(let latitude, let longitude):
+            return "\(urlPath)?units=metric&lat=\(latitude)&lon=\(longitude)&appid=\(apiKey)"
+        }
+    }
 
     func fetchCurrentWeather(requestType: WeatherRequestType) {
         
-        let urlString: String
+        let urlString = getURL(for: requestType)
         
-        switch requestType {
-        case .city(let name):
-            urlString = "\(urlPath)?units=metric&q=\(name)&appid=\(apiKey)"
-        case .coordinate(let latitude, let longitude):
-            urlString = "\(urlPath)?units=metric&lat=\(latitude)&lon=\(longitude)&appid=\(apiKey)"
-        }
-       
         print(urlString)     // delete this
         delegate?.activateLoadingIndicator()
         DispatchQueue.global(qos: .userInteractive).async {
@@ -44,11 +53,11 @@ class NetworkWeatherManager {
             }
             
             guard let jsonData = try? JSONDecoder().decode(CurrentWeatherData.self, from: data) else { return }
-            
-            print("\(jsonData.name) \(jsonData.weather.first?.icon ?? "unknown") icon\n") // delete
-            DispatchQueue.main.async {
-                self.delegate?.updateWeatherData(currentWeather: CurrentWeather(currentWetherData: jsonData))
+       
+            print("\(jsonData.locationName) \(jsonData.weatherIcon.first?.id ?? "unknown") icon\n") // delete
 
+            DispatchQueue.main.async {
+                self.delegate?.updateWeatherData(for: CurrentWeather(data: jsonData))
             }
         }
     }

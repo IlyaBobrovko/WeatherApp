@@ -8,14 +8,9 @@
 import UIKit
 import CoreLocation
 
-protocol NetworkWeatherManagerDelegate {
-    func updateWeatherData(currentWeather: CurrentWeather)
-    func activateLoadingIndicator()
-    func deactivateLoadingIndicator()
-    func presentErrorAlert(errorType: ErrorType)
-}
+//todo move
 
-class MainViewController: UIViewController {
+class WeatherViewController: UIViewController {
 
     @IBOutlet weak var cityNameLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -36,9 +31,7 @@ class MainViewController: UIViewController {
             locationManager.requestLocation()
         } else {
             presentErrorAlert(errorType: .unavailableLocationServices)
-            deactivateLoadingIndicator()
         }
-
     }
     
     override func viewDidLoad() {
@@ -50,7 +43,7 @@ class MainViewController: UIViewController {
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         locationManager.requestWhenInUseAuthorization()
         
-                activateLoadingIndicator()
+        activateLoadingIndicator()
         
         if CLLocationManager.locationServicesEnabled() {
             locationManager.requestLocation()
@@ -63,8 +56,8 @@ class MainViewController: UIViewController {
 
 //MARK: - AlertControllers
 
-extension MainViewController {
-    func presentAlertController() {
+extension WeatherViewController {
+    private func presentAlertController() {
         let alert = UIAlertController(title: "Enter location name", message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
             let sities = ["Tokyo", "Moscow", "Barcelona", "New York", "Paris", "Los Angeles", "London"]
@@ -86,13 +79,13 @@ extension MainViewController {
 
 //MARK: - NetworkWeatherManagerDelegare
 
-extension MainViewController: NetworkWeatherManagerDelegate {
+extension WeatherViewController: NetworkWeatherManagerDelegate {
     
-    func updateWeatherData(currentWeather: CurrentWeather) {
-        cityNameLabel.text = currentWeather.cityName
-        temperatureLabel.text = currentWeather.currentTempetatureString + "°"
-        additionalInfoLabel.text = "Min \(currentWeather.minTemperatureString)°, max \(currentWeather.maxTemperatureString)°"
-        currentWeatherImage.image = UIImage(systemName: currentWeather.weatherImageName)
+    func updateWeatherData(for weather: CurrentWeather) {
+        cityNameLabel.text = weather.locationName
+        temperatureLabel.text = weather.currentTempetatureString + "°"
+        additionalInfoLabel.text = "Min \(weather.minTemperatureString)°, max \(weather.maxTemperatureString)°"
+        currentWeatherImage.image = UIImage(systemName: weather.weatherImageName)
         
         deactivateLoadingIndicator()
     }
@@ -128,7 +121,7 @@ extension MainViewController: NetworkWeatherManagerDelegate {
 
 //MARK: - LocationManagerDelegate
 
-extension MainViewController: CLLocationManagerDelegate {
+extension WeatherViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
@@ -140,6 +133,5 @@ extension MainViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         presentErrorAlert(errorType: .unavailableLocationServices)
-        deactivateLoadingIndicator()
     }
 }

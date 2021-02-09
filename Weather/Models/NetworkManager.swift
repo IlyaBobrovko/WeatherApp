@@ -10,7 +10,9 @@ import Network
 class NetworkManager {
     
     private let monitor: NWPathMonitor
+    
     private let queue: DispatchQueue
+    
     private var isInternetConnected = false
     
     func isInternetConntected() -> Bool {
